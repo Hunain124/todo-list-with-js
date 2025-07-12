@@ -1,54 +1,26 @@
-let form = document.getElementById("taskForm");
-    let input = document.getElementById("taskInput");
-    let list = document.getElementById("taskList");
+const form = document.querySelector("#taskForm");
+let inputField = form.querySelector("#taskInput");
+const taskList = document.querySelector("#taskList");
 
-    window.onload = function () {
-      let saved = localStorage.getItem("tasks");
-      if (saved) {
-        let tasks = saved.split(","); 
-        tasks.forEach(task => {
-          if (task) addTaskToUI(task);
-        });
-      }
-    };
 
-    form.onsubmit = function (e) {
-      e.preventDefault();
-      let taskText = input.value.trim();
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-      if (taskText !== "") {
-        addTaskToUI(taskText);
-        saveToLocalStorage(taskText);
-        input.value = "";
-      }
-    };
+  let toDo = localStorage.getItem("toDO");
+  let inputValue = inputField.value;
 
-    function addTaskToUI(task) {
-      let li = document.createElement("li");
-      li.textContent = task + " ";
+  localStorage.setItem('toDo', inputValue);
+  getData();
+  
+  console.log(inputValue);
+})
 
-      let delBtn = document.createElement("button");
-      delBtn.textContent = "Delete";
-      delBtn.onclick = function () {
-        li.remove(); 
-        deleteFromLocalStorage(task); 
-      };
+function getData() {
+  let li = document.createElement('li');
+  li.innerHTML = `<span>asdasd </span><span><button>Delete</button><button>update</button></span>`
+  taskList.appendChild(li)
+}
 
-      li.appendChild(delBtn);
-      list.appendChild(li);
-    }
 
-    function saveToLocalStorage(task) {
-      let existing = localStorage.getItem("tasks");
-      let updated = existing ? existing + "," + task : task;
-      localStorage.setItem("tasks", updated);
-    }
 
-    function deleteFromLocalStorage(taskToDelete) {
-      let allTasks = localStorage.getItem("tasks");
-      if (allTasks) {
-        let arr = allTasks.split(",");
-        let updatedTasks = arr.filter(t => t !== taskToDelete);
-        localStorage.setItem("tasks", updatedTasks.join(","));
-      }
-    }
+console.log(inputField)
