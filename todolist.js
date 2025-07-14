@@ -1,26 +1,52 @@
 const form = document.querySelector("#taskForm");
-let inputField = form.querySelector("#taskInput");
+const inputField = form.querySelector("#taskInput");
 const taskList = document.querySelector("#taskList");
 
+document.addEventListener("DOMContentLoaded", getData);
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  let toDo = localStorage.getItem("toDO");
-  let inputValue = inputField.value;
+  const inputValue = inputField.value.trim();
+  if (!inputValue) return;
 
-  localStorage.setItem('toDo', inputValue);
+  let tasks = JSON.parse(localStorage.getItem("toDo")) || [];
+
+  tasks.push(inputValue);
+  localStorage.setItem("toDo", JSON.stringify(tasks));
+
+  inputField.value = "";
   getData();
-  
-  console.log(inputValue);
-})
+});
 
 function getData() {
-  let li = document.createElement('li');
-  li.innerHTML = `<span>asdasd </span><span><button>Delete</button><button>update</button></span>`
-  taskList.appendChild(li)
+  taskList.innerHTML = ""; 
+  const tasks = JSON.parse(localStorage.getItem("toDo")) || [];
+
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <span>${task}</span>
+      <span>
+        <button class="delete" data-index="${index}">Delete</button>
+      </span>
+    `;
+
+    taskList.appendChild(li);
+  });
+
+  document.querySelectorAll(".delete").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const index = parseInt(e.target.getAttribute("data-index")); // FIXED line
+      deleteTask(index);
+    });
+  });
 }
 
-
-
-console.log(inputField)
+function deleteTask(index) {
+  let tasks = JSON.parse(localStorage.getItem("toDo")) || [];
+  tasks.splice(index, 1); 
+  localStorage.setItem("toDo", JSON.stringify(tasks));
+  getData(); 
+}
